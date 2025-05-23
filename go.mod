@@ -7,6 +7,7 @@ toolchain go1.24.2
 require (
 	github.com/go-pg/pg/v10 v10.14.0
 	github.com/golang-migrate/migrate/v4 v4.18.3
+	github.com/sirupsen/logrus v1.9.3
 )
 
 require (
