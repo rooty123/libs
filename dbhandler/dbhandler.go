@@ -8,6 +8,7 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/rooty123/libs/logger"
 )
 
 type DBHandler struct {
@@ -67,7 +68,9 @@ func (db *DBHandler) RunMigrations() {
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
 		panic(fmt.Sprintf("Failed to run migrations: %v", err))
 	}
-	fmt.Println("Migrations ran successfully!")
+	logger.WithFields(map[string]interface{}{
+		"event": "migrations_ran",
+	}).Info("Migrations ran successfully!")
 }
 
 func getEnv(key, defaultValue string) string {
