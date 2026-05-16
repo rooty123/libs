@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	serviceName = "users"
-	logLevelEnv = "LOG_LEVEL"
+	logLevelEnv    = "LOG_LEVEL"
+	serviceNameEnv = "SERVICE_NAME"
 )
 
 var log *logrus.Logger
@@ -19,13 +19,18 @@ func init() {
 	log.SetFormatter(&logrus.JSONFormatter{
 		TimestampFormat: time.RFC3339Nano,
 	})
-
-	level := getLogLevel()
-	log.SetLevel(level)
+	log.SetLevel(getLogLevel())
 }
 
-func NewLogger() *logrus.Logger {
-	return log
+func serviceName() string {
+	if name := os.Getenv(serviceNameEnv); name != "" {
+		return name
+	}
+	return "unknown"
+}
+
+func NewLogger() *logrus.Entry {
+	return log.WithField("service_name", serviceName())
 }
 
 func getLogLevel() logrus.Level {
@@ -38,9 +43,9 @@ func getLogLevel() logrus.Level {
 }
 
 func WithRequestID(requestID string) *logrus.Entry {
-	return log.WithField("request_id", requestID)
+	return NewLogger().WithField("request_id", requestID)
 }
 
 func WithFields(fields map[string]interface{}) *logrus.Entry {
-	return log.WithFields(fields)
+	return NewLogger().WithFields(fields)
 }
